@@ -250,7 +250,7 @@ paths:
                       - gov-client-user-ids
       deprecated: false
       security:
-      - applicationRestricted: []
+      - Application-Restricted: []
   /test/fraud-prevention-headers/{api}/validation-feedback:
     get:
       summary: Get feedback on requests made to an API
@@ -736,7 +736,7 @@ paths:
                     errors: []
       deprecated: false
       security:
-      - applicationRestricted: []
+      - Application-Restricted: []
 components:
   schemas:
     apiIdentifier:
@@ -1548,7 +1548,7 @@ components:
         type: string
         example: Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
   securitySchemes:
-    applicationRestricted:
+    Application-Restricted:
       type: oauth2
       description: |
         This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
