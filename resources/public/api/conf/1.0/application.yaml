@@ -320,8 +320,7 @@ paths:
           type: string
           description: "If your application uses more than 1 connection method, you\
             \ can use this query parameter to filter by connection method."
-          example:
-          - DESKTOP_APP_DIRECT
+          example: DESKTOP_APP_DIRECT
           enum:
           - BATCH_PROCESS_DIRECT
           - DESKTOP_APP_DIRECT
@@ -508,7 +507,7 @@ paths:
                       description: ""
                 description: API request validation feedback
                 example:
-                - requests:
+                  requests:
                   - path: /organisations/vat/107794340/liabilities
                     method: GET
                     requestTimestamp: 2020-09-21T10:30:05.962Z
