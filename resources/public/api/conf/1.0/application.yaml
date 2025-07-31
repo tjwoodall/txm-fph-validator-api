@@ -309,6 +309,15 @@ paths:
           - self-assessment-assist-mtd
           - self-employment-business-mtd
           - vat-mtd
+          - individuals-capital-gains-income-mtd
+          - individuals-dividends-income-mtd
+          - individuals-employments-income-mtd
+          - individuals-foreign-income-mtd
+          - individuals-insurance-policies-income-mtd
+          - individuals-other-income-mtd
+          - individuals-pensions-income-mtd
+          - individuals-savings-income-mtd
+          - self-assessment-individual-details-mtd
       - name: connectionMethod
         in: query
         description: "If your application uses more than 1 connection method, you\
@@ -764,6 +773,15 @@ components:
       - self-assessment-assist-mtd
       - self-employment-business-mtd
       - vat-mtd
+      - individuals-capital-gains-income-mtd
+      - individuals-dividends-income-mtd
+      - individuals-employments-income-mtd
+      - individuals-foreign-income-mtd
+      - individuals-insurance-policies-income-mtd
+      - individuals-other-income-mtd
+      - individuals-pensions-income-mtd
+      - individuals-savings-income-mtd
+      - self-assessment-individual-details-mtd
     connectionMethod:
       type: string
       enum:
