@@ -1,0 +1,750 @@
+openapi: 3.0.3
+info:
+  title: Test Fraud Prevention Headers
+  version: '1.0'
+  description: |
+    This API checks the fraud prevention headers on individual requests.
+    
+    See also [fraud prevention](https://developer.service.hmrc.gov.uk/guides/fraud-prevention).
+servers:
+- url: https://test-api.service.hmrc.gov.uk
+  description: Sandbox
+
+paths:
+  /test/fraud-prevention-headers/validate:
+    get:
+      summary: Validate fraud prevention headers
+      description: This resource validates fraud prevention headers submitted with this HTTP request.
+      operationId: Validatefraudpreventionheaders
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      - $ref: '#/components/parameters/authorizationHeader'
+      - name: Gov-*
+        in: header
+        description: Add the [fraud prevention](/guides/fraud-prevention) headers to be validated as separate HTTP headers.
+        required: true
+        style: simple
+        schema:
+          type: string
+          example: >-
+            Gov-Client-Connection-Method: DESKTOP_APP_DIRECT
+
+            Gov-Client-Device-ID: 3d8a8d57-1af9-4ccb-b87c-5bb7d05d9be7
+
+            Gov-Client-Timezone: UTC+00:00
+
+            ...
+
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/TestFraudPreventionHeadersValidateresponse'
+              examples:
+                noFphHeadersProvided:
+                  description: No fraud prevention headers provided
+                  value:
+                    specVersion: '3.1'
+                    code: INVALID_HEADERS
+                    message: No fraud prevention headers submitted. These are required by law. Check the specification.
+                allFphHeadersValid:
+                  description: All fraud prevention headers appear to be valid
+                  value:
+                    specVersion: '3.1'
+                    code: VALID_HEADERS
+                    message: All headers required for your connection method have been supplied and all appear to be valid. Validation is based on a single request. We have access to all requests and can draw additional conclusions.
+                someFphHeadersWithAdvisories:
+                  description: Some fraud prevention headers where advisories are given
+                  value:
+                    specVersion: '3.1'
+                    code: POTENTIALLY_INVALID_HEADERS
+                    message: At least 1 header is potentially invalid
+                    warnings:
+                    - code: POTENTIALLY_INVALID_HEADER
+                      message: Check you are using the correct Gov-Client-Connection-Method. Web applications do not usually provide the os field as browsers do not expose this information.
+                      headers:
+                      - gov-client-user-ids
+                someFphHeadersInvalid:
+                  description: Some fraud prevention headers may be invalid
+                  value:
+                    specVersion: '3.1'
+                    code: INVALID_HEADERS
+                    message: At least 1 header is invalid
+                    errors:
+                    - code: INVALID_HEADER
+                      message: Value must be a recognised timezone in UTC format, submitted as UTC±<hh>:<mm>
+                      headers:
+                      - gov-client-timezone
+                    - code: MISSING_HEADER
+                      message: Header required
+                      headers:
+                      - gov-vendor-version
+                    - code: INVALID_HEADERS
+                      message: At least 1 pair of IPs in Gov-Vendor-Forwarded must include Gov-Client-Public-IP in the 'for' field and Gov-Vendor-Public-IP in the 'by' field. Check all 3 headers are consistent.
+                      headers:
+                      - gov-vendor-forwarded
+                      - gov-vendor-public-ip
+                      - gov-client-public-ip
+                    warnings:
+                    - code: POTENTIALLY_INVALID_HEADER
+                      message: Check you are using the correct Gov-Client-Connection-Method. Web applications do not usually provide the os field as browsers do not expose this information.
+                      headers:
+                      - gov-client-user-ids
+      deprecated: false
+      security:
+        - applicationRestricted: []
+
+  /test/fraud-prevention-headers/{api}/validation-feedback:
+    get:
+      summary: Get feedback on requests made to an API
+      description: Use this resource to get feedback on fraud prevention headers submitted by your application in sandbox. You'll get detailed feedback on the most recent request to each endpoint of a supported API.
+      operationId: GetfeedbackonrequestsmadetoanAPI
+      parameters:
+      - $ref: '#/components/parameters/acceptHeader'
+      - $ref: '#/components/parameters/authorizationHeader'
+      - name: api
+        in: path
+        description: Identifies the API to get feedback on.
+        required: true
+        style: simple
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/apiIdentifier'
+          - description: Identifies the API to get feedback on.
+      - name: connectionMethod
+        in: query
+        description: If your application uses more than 1 connection method, you can use this query parameter to filter by connection method.
+        style: form
+        explode: true
+        schema:
+          allOf:
+          - $ref: '#/components/schemas/connectionMethod'
+          - description: If your application uses more than 1 connection method, you can use this query parameter to filter by connection method.
+            example: DESKTOP_APP_DIRECT
+      responses:
+        '200':
+          description: ''
+          headers: {}
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/TestFraudPreventionHeadersValidationFeedbackresponse'
+                - example:
+                    requests:
+                    - path: /organisations/vat/107794340/liabilities
+                      method: GET
+                      requestTimestamp: 2020-09-21T10:30:05.962Z
+                      code: INVALID_HEADERS
+                      headers:
+                      - header: gov-client-connection-method
+                        value: DESKTOP_APP_VIA_SERVER
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-device-id
+                        value: beec798b-b366-47fa-b1f8-92cede14a1ce
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-local-ips
+                        value: 10.1.2.3,10.3.4.2
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-local-ips-timestamp
+                        value: 2020-09-21T10:30:05.123Z
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-mac-addresses
+                        code: MISSING_HEADER
+                        errors:
+                        - Header required
+                        warnings: []
+                      - header: gov-client-multi-factor
+                        value: type=AUTH_CODE&timestamp=2017-04-21T13%3A23Z&unique-reference=c672b8d1ef56ed28,type=TOTP&timestamp=2017-05-19T13%3A10Z&unique-reference=ac73430ffdfd9
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-public-ip
+                        value: 198.51.100.0
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-public-ip-timestamp
+                        value: 2020-09-21T10:30:05.123Z
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-public-port
+                        value: '12345'
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-screens
+                        value: width=1920&height=1080
+                        code: INVALID_HEADER
+                        errors:
+                        - At least 1 screen is missing a value for scaling factor
+                        - At least 1 screen is missing a value for colour depth
+                        warnings: []
+                      - header: gov-client-timezone
+                        value: UTC+00:00
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-user-agent
+                        value: os-family=Windows&os-version=Server%202012&device-manufacturer=Dell%20Inc.&device-model=OptiPlex%20980
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-user-ids
+                        value: os=user123
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-client-window-size
+                        value: width=1256&height=803
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-vendor-forwarded
+                        value: by=203.0.113.6&for=198.51.100.0
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-vendor-license-ids
+                        value: my%20licensed%20software=8D7963490527D33716835EE7C195516D5E562E03B224E9B359836466EE40CDE1
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-vendor-public-ip
+                        value: 203.0.113.6
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-vendor-product-name
+                        value: Product%20Name
+                        code: VALID_HEADER
+                        errors: []
+                        warnings: []
+                      - header: gov-vendor-version
+                        value: my-desktop-app=2.2.2
+                        code: POTENTIALLY_INVALID_HEADER
+                        errors: []
+                        warnings:
+                        - For client server architectures, submit a version for the client and the server. For all other architectures, submit at least 1 version.
+                      crossValidation:
+                      - headers:
+                        - gov-vendor-forwarded
+                        - gov-vendor-public-ip
+                        - gov-client-public-ip
+                        code: VALID_HEADERS
+                        errors: []
+              example:
+                requests:
+                - path: /organisations/vat/107794340/liabilities
+                  method: GET
+                  requestTimestamp: 2020-09-21T10:30:05.962Z
+                  code: INVALID_HEADERS
+                  headers:
+                  - header: gov-client-connection-method
+                    value: DESKTOP_APP_VIA_SERVER
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-device-id
+                    value: beec798b-b366-47fa-b1f8-92cede14a1ce
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-local-ips
+                    value: 10.1.2.3,10.3.4.2
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-local-ips-timestamp
+                    value: 2020-09-21T10:30:05.123Z
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-mac-addresses
+                    code: MISSING_HEADER
+                    errors:
+                    - Header required
+                    warnings: []
+                  - header: gov-client-multi-factor
+                    value: type=AUTH_CODE&timestamp=2017-04-21T13%3A23Z&unique-reference=c672b8d1ef56ed28,type=TOTP&timestamp=2017-05-19T13%3A10Z&unique-reference=ac73430ffdfd9
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-public-ip
+                    value: 198.51.100.0
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-public-ip-timestamp
+                    value: 2020-09-21T10:30:05.123Z
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-public-port
+                    value: '12345'
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-screens
+                    value: width=1920&height=1080
+                    code: INVALID_HEADER
+                    errors:
+                    - At least 1 screen is missing a value for scaling factor
+                    - At least 1 screen is missing a value for colour depth
+                    warnings: []
+                  - header: gov-client-timezone
+                    value: UTC+00:00
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-user-agent
+                    value: os-family=Windows&os-version=Server%202012&device-manufacturer=Dell%20Inc.&device-model=OptiPlex%20980
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-user-ids
+                    value: os=user123
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-client-window-size
+                    value: width=1256&height=803
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-vendor-forwarded
+                    value: by=203.0.113.6&for=198.51.100.0
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-vendor-license-ids
+                    value: my%20licensed%20software=8D7963490527D33716835EE7C195516D5E562E03B224E9B359836466EE40CDE1
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-vendor-public-ip
+                    value: 203.0.113.6
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-vendor-product-name
+                    value: Product%20Name
+                    code: VALID_HEADER
+                    errors: []
+                    warnings: []
+                  - header: gov-vendor-version
+                    value: my-desktop-app=2.2.2
+                    code: POTENTIALLY_INVALID_HEADER
+                    errors: []
+                    warnings:
+                    - For client server architectures, submit a version for the client and the server. For all other architectures, submit at least 1 version.
+                  crossValidation:
+                  - headers:
+                    - gov-vendor-forwarded
+                    - gov-vendor-public-ip
+                    - gov-client-public-ip
+                    code: VALID_HEADERS
+                    errors: []
+      deprecated: false
+      security:
+        - applicationRestricted: []
+components:
+  parameters:
+    acceptHeader:
+      name: Accept
+      description: Specifies the response format and the [version](/api-documentation/docs/reference-guide#versioning) of the API to be used.
+      in: header
+      required: true
+      schema:
+        type: string
+        example: >-
+          application/vnd.hmrc.1.0+json
+    authorizationHeader:
+      name: Authorization
+      description: An [OAuth 2.0 Bearer Token](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints)
+      in: header
+      required: true
+      schema:
+        type: string
+        example: >-
+          Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+
+  securitySchemes:
+    applicationRestricted:
+      type: oauth2
+      description: |
+        This endpoint is [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) and requires an Authorization header containing an OAuth 2.0 Bearer Token.
+      flows:
+        clientCredentials:
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          scopes: {}
+  schemas:
+    apiIdentifier:
+      enum:
+      - business-details-mtd
+      - business-income-source-summary-mtd
+      - business-source-adjustable-summary-mtd
+      - cis-deductions-mtd
+      - individual-calculations-mtd
+      - individual-losses-mtd
+      - individuals-business-end-of-period-statement-mtd
+      - individuals-charges-mtd
+      - individuals-disclosures-mtd
+      - individuals-expenses-mtd
+      - individuals-income-received-mtd
+      - individuals-reliefs-mtd
+      - individuals-state-benefits-mtd
+      - obligations-mtd
+      - other-deductions-mtd
+      - property-business-mtd
+      - self-assessment-mtd
+      - self-assessment-accounts-mtd
+      - self-assessment-assist-mtd
+      - self-employment-business-mtd
+      - vat-mtd
+      - individuals-capital-gains-income-mtd
+      - individuals-dividends-income-mtd
+      - individuals-employments-income-mtd
+      - individuals-foreign-income-mtd
+      - individuals-insurance-policies-income-mtd
+      - individuals-other-income-mtd
+      - individuals-pensions-income-mtd
+      - individuals-savings-income-mtd
+      - self-assessment-individual-details-mtd
+      type: string
+    connectionMethod:
+      enum:
+      - BATCH_PROCESS_DIRECT
+      - DESKTOP_APP_DIRECT
+      - DESKTOP_APP_VIA_SERVER
+      - MOBILE_APP_DIRECT
+      - MOBILE_APP_VIA_SERVER
+      - OTHER_DIRECT
+      - OTHER_VIA_SERVER
+      - WEB_APP_VIA_SERVER
+      type: string
+    errorResponse:
+      title: errorResponse
+      required:
+      - code
+      type: object
+      properties:
+        code:
+          type: string
+    Code:
+      title: VALID_HEADERS
+      enum:
+      - VALID_HEADERS
+      type: string
+      description: basic checks show that the header value supplied appears to be valid.
+    Code1:
+      title: INVALID_HEADERS
+      enum:
+      - INVALID_HEADERS
+      type: string
+      description: basic checks show that at least 1 of the header values supplied is not valid.
+    Code2:
+      title: POTENTIALLY_INVALID_HEADERS
+      enum:
+      - POTENTIALLY_INVALID_HEADERS
+      type: string
+      description: basic checks show that at least 1 of the header values supplied is potentially invalid as per the current specification.
+    Code3:
+      title: INVALID_HEADER
+      enum:
+      - INVALID_HEADER
+      type: string
+      description: basic checks show that the header value supplied is not valid.
+    Code4:
+      title: POTENTIALLY_INVALID_HEADER
+      enum:
+      - POTENTIALLY_INVALID_HEADER
+      type: string
+      description: basic checks show that the header value supplied is potentially invalid as per the current specification.
+    Code5:
+      title: VALID_HEADERS
+      enum:
+      - VALID_HEADERS
+      type: string
+      description: basic checks show that the header values supplied appear to be valid.
+    Code6:
+      title: VALID_HEADER
+      enum:
+      - VALID_HEADER
+      type: string
+      description: basic checks show that the header value supplied is valid.
+    Code7:
+      title: VALID_HEADERS
+      enum:
+      - VALID_HEADERS
+      type: string
+      description: cross checks identified no problems with the headers.
+    Code32:
+      title: MISSING_HEADER
+      enum:
+      - MISSING_HEADER
+      type: string
+      description: header required for the connection method is not supplied.
+    Code33:
+      title: EMPTY_HEADER
+      enum:
+      - EMPTY_HEADER
+      type: string
+      description: header required for the connection method is empty.
+    Code41:
+      title: UNEXPECTED_HEADER
+      enum:
+      - UNEXPECTED_HEADER
+      type: string
+      description: header value supplied is not a fraud prevention header, or the fraud prevention header is not spelt correctly.
+    Code51:
+      title: INVALID_HEADERS
+      enum:
+      - INVALID_HEADERS
+      type: string
+      description: at least 1 of the header values supplied is not valid, check errors and warnings.
+    Code52:
+      title: POTENTIALLY_INVALID_HEADERS
+      enum:
+      - POTENTIALLY_INVALID_HEADERS
+      type: string
+      description: at least 1 of the header values supplied is potentially invalid, check warnings.
+    Code53:
+      title: NO_HEADERS
+      enum:
+      - NO_HEADERS
+      type: string
+      description: the request did not have any fraud prevention headers.
+    Code61:
+      title: INVALID_HEADER
+      enum:
+      - INVALID_HEADER
+      type: string
+      description: the header value supplied is not valid, check errors and warnings.
+    Code62:
+      title: POTENTIALLY_INVALID_HEADER
+      enum:
+      - POTENTIALLY_INVALID_HEADER
+      type: string
+      description: the header value supplied is potentially invalid, check warnings.
+    Code64:
+      title: UNEXPECTED_HEADER
+      enum:
+      - UNEXPECTED_HEADER
+      type: string
+      description: header is not needed for the connection method, is not a fraud prevention header, or is not spelt correctly.
+    Code65:
+      title: TEST_SCENARIO_HEADER
+      enum:
+      - TEST_SCENARIO_HEADER
+      type: string
+      description: header is used in sandbox testing to trigger different test scenarios.
+    Code71:
+      title: INVALID_HEADERS
+      enum:
+      - INVALID_HEADERS
+      type: string
+      description: cross checks identified one or more problems with the headers, check errors.
+    CrossValidation:
+      title: CrossValidation
+      required:
+      - headers
+      - code
+      - errors
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            type: string
+          description: A list of the headers included in the validation.
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code7'
+          - $ref: '#/components/schemas/Code71'
+          description: A machine-readable code indicating the result of cross validation.
+        errors:
+          type: array
+          items:
+            type: string
+          description: A list of error messages resulting from cross validation of header values.
+    Error:
+      title: Error
+      required:
+      - code
+      - message
+      - headers
+      type: object
+      properties:
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code3'
+          - $ref: '#/components/schemas/Code1'
+          - $ref: '#/components/schemas/Code32'
+          - $ref: '#/components/schemas/Code33'
+          description: A machine-readable code indicating the type of error.
+        message:
+          type: string
+          description: A description of the error.
+        headers:
+          minItems: 1
+          type: array
+          items:
+            type: string
+          description: A list of headers that have the error.
+    Header:
+      title: Header
+      required:
+      - header
+      - code
+      - errors
+      - warnings
+      type: object
+      properties:
+        header:
+          type: string
+          description: The name of the header.
+        value:
+          type: string
+          description: The value submitted for this header.
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code6'
+          - $ref: '#/components/schemas/Code61'
+          - $ref: '#/components/schemas/Code62'
+          - $ref: '#/components/schemas/Code32'
+          - $ref: '#/components/schemas/Code64'
+          - $ref: '#/components/schemas/Code65'
+          description: A machine-readable code indicating the validation result for the header.
+        errors:
+          type: array
+          items:
+            type: string
+          description: A list of error messages in the validation result for the header value.
+        warnings:
+          type: array
+          items:
+            type: string
+          description: A list of warning messages in the validation result for the header value.
+      description: ''
+    Request:
+      title: Request
+      required:
+      - path
+      - method
+      - requestTimestamp
+      - code
+      - headers
+      - crossValidation
+      type: object
+      properties:
+        path:
+          type: string
+          description: The path the request was submitted to.
+        method:
+          type: string
+          description: The HTTP method used for the request.
+        requestTimestamp:
+          type: string
+          description: The timestamp of when the request was submitted.
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code5'
+          - $ref: '#/components/schemas/Code51'
+          - $ref: '#/components/schemas/Code52'
+          - $ref: '#/components/schemas/Code53'
+          description: A machine-readable code indicating the validation result for the request.
+        headers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Header'
+          description: 'A list containing each of the Gov-* headers submitted with the request.'
+        crossValidation:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrossValidation'
+          description: A list of validations involving multiple headers.
+      description: ''
+    TestFraudPreventionHeadersValidateresponse:
+      title: TestFraudPreventionHeadersValidateresponse
+      required:
+      - specVersion
+      - message
+      - code
+      type: object
+      properties:
+        specVersion:
+          type: string
+          description: The version of fraud prevention headers specification that the request was validated against. This value will change when a major version of the specification is released.
+        message:
+          type: string
+          description: A summary of the overall outcome of the fraud prevention header checks.
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code'
+          - $ref: '#/components/schemas/Code1'
+          - $ref: '#/components/schemas/Code2'
+          description: A machine-readable code showing the overall validation result.
+        errors:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Error'
+          description: ''
+        warnings:
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/Warning'
+          description: ''
+      description: Test Fraud Prevention Headers Response
+    TestFraudPreventionHeadersValidationFeedbackresponse:
+      title: TestFraudPreventionHeadersValidationFeedbackresponse
+      required:
+      - requests
+      type: object
+      properties:
+        requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Request'
+          description: 'A list containing feedback on the latest request submitted to each API endpoint.'
+      description: API request validation feedback
+    Warning:
+      title: Warning
+      required:
+      - code
+      - message
+      - headers
+      type: object
+      properties:
+        code:
+          oneOf:
+          - $ref: '#/components/schemas/Code4'
+          - $ref: '#/components/schemas/Code41'
+          description: A machine-readable code indicating the type of error.
+        message:
+          type: string
+          description: A description of the error.
+        headers:
+          minItems: 1
+          type: array
+          items:
+            type: string
+          description: A list of headers that have the advisory.
+tags:
+- name: test-fraud-prevention-headers
+  description: ''
