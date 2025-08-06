@@ -123,8 +123,8 @@ paths:
         schema:
           allOf:
           - $ref: '#/components/schemas/connectionMethod'
-          - description: If your application uses more than 1 connection method, you can use this query parameter to filter by connection method.
-            example: DESKTOP_APP_DIRECT
+          description: If your application uses more than 1 connection method, you can use this query parameter to filter by connection method.
+          example: DESKTOP_APP_DIRECT
       responses:
         '200':
           description: ''
@@ -134,118 +134,118 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/TestFraudPreventionHeadersValidationFeedbackresponse'
-                - example:
-                    requests:
-                    - path: /organisations/vat/107794340/liabilities
-                      method: GET
-                      requestTimestamp: 2020-09-21T10:30:05.962Z
-                      code: INVALID_HEADERS
-                      headers:
-                      - header: gov-client-connection-method
-                        value: DESKTOP_APP_VIA_SERVER
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-device-id
-                        value: beec798b-b366-47fa-b1f8-92cede14a1ce
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-local-ips
-                        value: 10.1.2.3,10.3.4.2
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-local-ips-timestamp
-                        value: 2020-09-21T10:30:05.123Z
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-mac-addresses
-                        code: MISSING_HEADER
-                        errors:
-                        - Header required
-                        warnings: []
-                      - header: gov-client-multi-factor
-                        value: type=AUTH_CODE&timestamp=2017-04-21T13%3A23Z&unique-reference=c672b8d1ef56ed28,type=TOTP&timestamp=2017-05-19T13%3A10Z&unique-reference=ac73430ffdfd9
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-public-ip
-                        value: 198.51.100.0
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-public-ip-timestamp
-                        value: 2020-09-21T10:30:05.123Z
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-public-port
-                        value: '12345'
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-screens
-                        value: width=1920&height=1080
-                        code: INVALID_HEADER
-                        errors:
-                        - At least 1 screen is missing a value for scaling factor
-                        - At least 1 screen is missing a value for colour depth
-                        warnings: []
-                      - header: gov-client-timezone
-                        value: UTC+00:00
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-user-agent
-                        value: os-family=Windows&os-version=Server%202012&device-manufacturer=Dell%20Inc.&device-model=OptiPlex%20980
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-user-ids
-                        value: os=user123
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-client-window-size
-                        value: width=1256&height=803
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-vendor-forwarded
-                        value: by=203.0.113.6&for=198.51.100.0
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-vendor-license-ids
-                        value: my%20licensed%20software=8D7963490527D33716835EE7C195516D5E562E03B224E9B359836466EE40CDE1
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-vendor-public-ip
-                        value: 203.0.113.6
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-vendor-product-name
-                        value: Product%20Name
-                        code: VALID_HEADER
-                        errors: []
-                        warnings: []
-                      - header: gov-vendor-version
-                        value: my-desktop-app=2.2.2
-                        code: POTENTIALLY_INVALID_HEADER
-                        errors: []
-                        warnings:
-                        - For client server architectures, submit a version for the client and the server. For all other architectures, submit at least 1 version.
-                      crossValidation:
-                      - headers:
-                        - gov-vendor-forwarded
-                        - gov-vendor-public-ip
-                        - gov-client-public-ip
-                        code: VALID_HEADERS
-                        errors: []
+                example:
+                  requests:
+                  - path: /organisations/vat/107794340/liabilities
+                    method: GET
+                    requestTimestamp: 2020-09-21T10:30:05.962Z
+                    code: INVALID_HEADERS
+                    headers:
+                    - header: gov-client-connection-method
+                      value: DESKTOP_APP_VIA_SERVER
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-device-id
+                      value: beec798b-b366-47fa-b1f8-92cede14a1ce
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-local-ips
+                      value: 10.1.2.3,10.3.4.2
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-local-ips-timestamp
+                      value: 2020-09-21T10:30:05.123Z
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-mac-addresses
+                      code: MISSING_HEADER
+                      errors:
+                      - Header required
+                      warnings: []
+                    - header: gov-client-multi-factor
+                      value: type=AUTH_CODE&timestamp=2017-04-21T13%3A23Z&unique-reference=c672b8d1ef56ed28,type=TOTP&timestamp=2017-05-19T13%3A10Z&unique-reference=ac73430ffdfd9
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-public-ip
+                      value: 198.51.100.0
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-public-ip-timestamp
+                      value: 2020-09-21T10:30:05.123Z
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-public-port
+                      value: '12345'
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-screens
+                      value: width=1920&height=1080
+                      code: INVALID_HEADER
+                      errors:
+                      - At least 1 screen is missing a value for scaling factor
+                      - At least 1 screen is missing a value for colour depth
+                      warnings: []
+                    - header: gov-client-timezone
+                      value: UTC+00:00
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-user-agent
+                      value: os-family=Windows&os-version=Server%202012&device-manufacturer=Dell%20Inc.&device-model=OptiPlex%20980
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-user-ids
+                      value: os=user123
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-client-window-size
+                      value: width=1256&height=803
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-vendor-forwarded
+                      value: by=203.0.113.6&for=198.51.100.0
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-vendor-license-ids
+                      value: my%20licensed%20software=8D7963490527D33716835EE7C195516D5E562E03B224E9B359836466EE40CDE1
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-vendor-public-ip
+                      value: 203.0.113.6
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-vendor-product-name
+                      value: Product%20Name
+                      code: VALID_HEADER
+                      errors: []
+                      warnings: []
+                    - header: gov-vendor-version
+                      value: my-desktop-app=2.2.2
+                      code: POTENTIALLY_INVALID_HEADER
+                      errors: []
+                      warnings:
+                      - For client server architectures, submit a version for the client and the server. For all other architectures, submit at least 1 version.
+                    crossValidation:
+                    - headers:
+                      - gov-vendor-forwarded
+                      - gov-vendor-public-ip
+                      - gov-client-public-ip
+                      code: VALID_HEADERS
+                      errors: []
               example:
                 requests:
                 - path: /organisations/vat/107794340/liabilities
