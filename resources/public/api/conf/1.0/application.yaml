@@ -734,6 +734,7 @@ components:
         code:
           oneOf:
           - $ref: '#/components/schemas/Code4'
+          - $ref: '#/components/schemas/Code33'
           - $ref: '#/components/schemas/Code41'
           description: A machine-readable code indicating the type of error.
         message:
