@@ -19,21 +19,26 @@ paths:
       parameters:
       - $ref: '#/components/parameters/acceptHeader'
       - $ref: '#/components/parameters/authorizationHeader'
-      - name: Gov-*
-        in: header
-        description: Add the [fraud prevention](/guides/fraud-prevention) headers to be validated as separate HTTP headers.
-        required: true
-        style: simple
-        schema:
-          type: string
-          example: >-
-            Gov-Client-Connection-Method: DESKTOP_APP_DIRECT
-
-            Gov-Client-Device-ID: 3d8a8d57-1af9-4ccb-b87c-5bb7d05d9be7
-
-            Gov-Client-Timezone: UTC+00:00
-
-            ...
+      - $ref: '#/components/parameters/gov-client-connection-method'
+      - $ref: '#/components/parameters/gov-client-device-id'
+      - $ref: '#/components/parameters/gov-client-local-ips'
+      - $ref: '#/components/parameters/gov-client-local-ips-timestamp'
+      - $ref: '#/components/parameters/gov-client-mac-addresses'
+      - $ref: '#/components/parameters/gov-client-multi-factor'
+      - $ref: '#/components/parameters/gov-client-screens'
+      - $ref: '#/components/parameters/gov-client-timezone'
+      - $ref: '#/components/parameters/gov-client-user-agent'
+      - $ref: '#/components/parameters/gov-client-user-ids'
+      - $ref: '#/components/parameters/gov-client-window-size'
+      - $ref: '#/components/parameters/gov-vendor-license-ids'
+      - $ref: '#/components/parameters/gov-vendor-product-name'
+      - $ref: '#/components/parameters/gov-vendor-version'
+      - $ref: '#/components/parameters/gov-client-public-ip'
+      - $ref: '#/components/parameters/gov-client-public-ip-timestamp'
+      - $ref: '#/components/parameters/gov-client-public-port'
+      - $ref: '#/components/parameters/gov-vendor-forwarded'
+      - $ref: '#/components/parameters/gov-vendor-public-ip'
+      - $ref: '#/components/parameters/gov-client-browser-js-user-agent'
 
       responses:
         '200':
@@ -381,6 +386,223 @@ components:
         type: string
         example: >-
           Bearer 59fc92c1cdf0b8ef1f138a702effdbd2
+
+    # https://developer.service.hmrc.gov.uk/guides/fraud-prevention/
+    # generated with make in tools/utils/
+    gov-client-connection-method:
+      name: Gov-Client-Connection-Method
+      description: TBD
+      in: header
+      schema:
+        type: string
+        enum:
+        - MOBILE_APP_DIRECT
+        - MOBILE_APP_VIA_SERVER
+        - DESKTOP_APP_VIA_SERVER
+        - BATCH_PROCESS_DIRECT
+        - DESKTOP_APP_DIRECT
+        - WEB_APP_VIA_SERVER
+    gov-client-device-id:
+      name: Gov-Client-Device-ID
+      description: An identifier unique to the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: beec798b-b366-47fa-b1f8-92cede14a1ce
+    gov-client-local-ips:
+      name: Gov-Client-Local-IPs
+      description: A list of all local IPv4 and IPv6 addresses available to the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: 10.1.2.3,10.3.4.2
+        name1:
+          value: fc00%3A%3A,10.1.2.3
+    gov-client-local-ips-timestamp:
+      name: Gov-Client-Local-IPs-Timestamp
+      description: A timestamp to show when Gov-Client-Local-IPs is collected.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: 2020-09-21T14:30:05.123Z
+    gov-client-mac-addresses:
+      name: Gov-Client-MAC-Addresses
+      description: The list of MAC addresses available on the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: ea%3A43%3A1a%3A5d%3A21%3A45,10%3A12%3Acc%3Afa%3Aaa%3A32
+    gov-client-multi-factor:
+      name: Gov-Client-Multi-Factor
+      description: A list of key-value data structures containing details of the multi-factor authentication (MFA) statuses related to the API call.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: type=AUTH_CODE&timestamp=2021-11-21T13%3A23Z&unique-reference=fc4b5fd6816f75a7c81fc8eaa9499d6a299bd803397166e8c4cf9280b801d62c,type=TOTP&timestamp=2021-11-21T13%3A20Z&unique-reference=0283da60063abfb3a87f1aed845d17fe2d9ba8c780b478dc4ae048f5ee97a6d5
+    gov-client-screens:
+      name: Gov-Client-Screens
+      description: Information about the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: width=375&height=812&scaling-factor=2&colour-depth=32
+        name1:
+          value: width=1920&height=1080&scaling-factor=1&colour-depth=16,width=3000&height=2000&scaling-factor=1.25&colour-depth=16
+    gov-client-timezone:
+      name: Gov-Client-Timezone
+      description: The local timezone of the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: UTC+00:00
+        name1:
+          value: UTC+01:00
+        name2:
+          value: UTC-01:15
+    gov-client-user-agent:
+      name: Gov-Client-User-Agent
+      description: Identifies the operating system and device.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: os-family=Windows&os-version=Server%202012&device-manufacturer=Dell%20Inc.&device-model=OptiPlex%20980
+        name1:
+          value: os-family=iOS&os-version=13.3.1&device-manufacturer=Apple&device-model=iPhone12%2C3
+    gov-client-user-ids:
+      name: Gov-Client-User-IDs
+      description: A key-value data structure containing user identifiers.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: os=domain%5Calice&my-application=alice123
+        name1:
+          value: os=domain%5Calice&my-application=alice123&my-secondary-application=alice_secondary
+        name2:
+          value: my-application=alice123
+        name3:
+          value: os=domain%5Calice
+    gov-client-window-size:
+      name: Gov-Client-Window-Size
+      description: The width and height of the window (in pixels) on the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: width=1256&height=803
+        name1:
+          value: width=375&height=812
+    gov-vendor-license-ids:
+      name: Gov-Vendor-License-IDs
+      description: A key-value data structure of hashed license keys relating to the vendor software initiating the API request on the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: my-licensed-software=8D7963490527D33716835EE7C195516D5E562E03B224E9B359836466EE40CDE1
+    gov-vendor-product-name:
+      name: Gov-Vendor-Product-Name
+      description: The name of the product marketed to end users.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: Company%20Name
+        name1:
+          value: Product%20Name
+    gov-vendor-version:
+      name: Gov-Vendor-Version
+      description: A key-value data structure of versions of your software involved in handling a request.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: my-mobile-app=2.2.2&my-serverside-code=v3.8
+        name1:
+          value: my-web-app=2.2.2
+        name2:
+          value: my-application=1.6.0
+        name3:
+          value: my-desktop-app=2.2.2&my-serverside-code=v3.8
+    gov-client-public-ip:
+      name: Gov-Client-Public-IP
+      description: The public IPv4 or IPv6 address from which the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: ABCD:EF01:2345:6789:ABCD:EF01:2345:6789
+        name1:
+          value: 198.51.100.0
+    gov-client-public-ip-timestamp:
+      name: Gov-Client-Public-IP-Timestamp
+      description: A timestamp to show when Gov-Client-Public-IP is collected.
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: 2020-09-21T14:30:05.123Z
+    gov-client-public-port:
+      name: Gov-Client-Public-Port
+      description: The public TCP port used by the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: 12345
+    gov-vendor-forwarded:
+      name: Gov-Vendor-Forwarded
+      description: A list that details hops over the internet between services that terminate Transport Layer Security (TLS).
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: by=203.0.113.6&for=198.51.100.0
+        name1:
+          value: by=2001%3A0db8%3A85a3%3A0000%3A0000%3A8a2e%3A0370%3A7334&for=198.51.100.0,by=203.0.113.6&for=2001%3A0db8%3A85a3%3A0000%3A0000%3A8a2e%3A0370%3A7334,by=176.30.57.118&for=203.0.113.6
+    gov-vendor-public-ip:
+      name: Gov-Vendor-Public-IP
+      description: The public IP address of the servers the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: 203.0.113.6
+    gov-client-browser-js-user-agent:
+      name: Gov-Client-Browser-JS-User-Agent
+      description: JavaScript-reported user agent string from the 
+      in: header
+      schema:
+        type: string
+      examples:
+        name0:
+          value: Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7B405
 
   securitySchemes:
     Application-Restricted:
