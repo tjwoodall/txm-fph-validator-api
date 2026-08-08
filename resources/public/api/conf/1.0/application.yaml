@@ -424,6 +424,8 @@ components:
       - individuals-pensions-income-mtd
       - individuals-savings-income-mtd
       - self-assessment-individual-details-mtd
+      - individuals-partner-income-mtd
+      - individuals-tax-liability-adjustments-mtd
       type: string
     connectionMethod:
       enum:
