@@ -318,6 +318,8 @@ paths:
           - individuals-pensions-income-mtd
           - individuals-savings-income-mtd
           - self-assessment-individual-details-mtd
+          - individuals-partner-income-mtd
+          - individuals-tax-liability-adjustments-mtd
       - name: connectionMethod
         in: query
         description: "If your application uses more than 1 connection method, you\
@@ -782,6 +784,8 @@ components:
       - individuals-pensions-income-mtd
       - individuals-savings-income-mtd
       - self-assessment-individual-details-mtd
+      - individuals-partner-income-mtd
+      - individuals-tax-liability-adjustments-mtd
     connectionMethod:
       type: string
       enum:
